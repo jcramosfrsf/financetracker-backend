@@ -147,3 +147,51 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# DRF Spectacular Settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'FinanceTracker API',
+    'DESCRIPTION': '''
+    API REST para el gestor financiero personal FinanceTracker.
+    
+    Esta API permite:
+    - Gestionar transacciones (ingresos y gastos)
+    - Crear y administrar presupuestos
+    - Generar reportes financieros
+    - Categorizar transacciones
+    
+    Todos los endpoints requieren autenticación por token excepto el endpoint de autenticación.
+    ''',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': '/api/',
+    'CONTACT': {
+        'name': 'FinanceTracker Team',
+        'email': 'support@financetracker.com',
+    },
+    'LICENSE': {
+        'name': 'MIT License',
+        'url': 'https://opensource.org/licenses/MIT',
+    },
+    'TAGS': [
+        {'name': 'authentication', 'description': 'Endpoints de autenticación'},
+        {'name': 'transactions', 'description': 'Gestión de transacciones (ingresos y gastos)'},
+        {'name': 'budgets', 'description': 'Gestión de presupuestos'},
+        {'name': 'reports', 'description': 'Generación de reportes financieros'},
+        {'name': 'categories', 'description': 'Categorización de transacciones'},
+    ],
+    'SECURITY': [
+        {
+            'Token': []
+        }
+    ],
+    'SECURITY_DEFINITIONS': {
+        'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'Token de autenticación en formato: Token <tu_token>'
+        }
+    },
+}

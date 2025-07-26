@@ -77,6 +77,13 @@ Sigue estos pasos para configurar y ejecutar el proyecto en tu entorno local.
 
 La API está construida siguiendo los principios REST. Todos los endpoints (excepto el de autenticación) requieren un token para ser accedidos.
 
+### Documentación Swagger
+
+La documentación completa de la API está disponible en:
+- **Swagger UI**: `http://localhost:8000/api/schema/swagger-ui/`
+- **ReDoc**: `http://localhost:8000/api/schema/redoc/`
+- **Schema JSON**: `http://localhost:8000/api/schema/`
+
 ### Autenticación
 
 1.  **Obtener Token de Autenticación**
@@ -116,10 +123,16 @@ La API está construida siguiendo los principios REST. Todos los endpoints (exce
 |                   | `/api/budgets/<id>/`      | `GET`, `PUT`, `PATCH`, `DELETE` | Ver, actualizar o eliminar un presupuesto.     |
 | **Reportes**      | `/api/reports/`           | `GET`, `POST`                   | Listar todos tus reportes o crear uno.         |
 |                   | `/api/reports/<id>/`      | `GET`, `PUT`, `PATCH`, `DELETE` | Ver, actualizar o eliminar un reporte.         |
+| **Análisis**      | `/api/categories/{id}/analysis/` | `GET`                    | Análisis detallado de una categoría específica. |
+|                   | `/api/categories/summary/` | `GET`                    | Resumen de todas las categorías con métricas.   |
+|                   | `/api/transactions/statistics/` | `GET`                | Estadísticas generales de transacciones.        |
 
 ## 🔮 Próximos Pasos
 
+- ✅ **Análisis de Transacciones por Categorías**: Implementado con endpoints detallados y métricas avanzadas.
 - Implementar la lógica de negocio para la generación automática de reportes.
 - Desarrollar un frontend (por ejemplo, con React) para consumir la API.
 - Crear un sistema de alertas por correo o notificaciones push.
 - Integrar un sistema para la importación de extractos bancarios (CSV, etc.).
+- Implementar análisis de tendencias más sofisticado.
+- Crear endpoints para exportación de datos a CSV/Excel.

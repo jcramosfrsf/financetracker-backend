@@ -7,10 +7,17 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
-from .models import Category, Transaction, CategoryAnalysis
+from .models import (
+    Category, Transaction, CategoryAnalysis, SavingsGoal, 
+    SavingsTransaction, AutoSaveRule, SavingsRecommendation, 
+    SavingsInsight, SavingsAchievement, SavingsSimulation, SavingsReminder
+)
 from .serializers import (
     CategorySerializer, TransactionSerializer, CategoryAnalysisSerializer,
-    CategorySummarySerializer, CategoryTrendSerializer, CategoryComparisonSerializer
+    CategorySummarySerializer, CategoryTrendSerializer, CategoryComparisonSerializer,
+    SavingsGoalSerializer, SavingsTransactionSerializer, AutoSaveRuleSerializer,
+    SavingsRecommendationSerializer, SavingsInsightSerializer, SavingsAchievementSerializer,
+    SavingsSimulationSerializer, SavingsReminderSerializer, SavingsDashboardSerializer
 )
 
 # Create your views here.
@@ -588,3 +595,210 @@ class TransactionViewSet(viewsets.ModelViewSet):
                 'end_date': end_date
             }
         })
+
+
+# ============================================================================
+# VISTAS PARA EL SISTEMA DE AHORRO INTELIGENTE
+# ============================================================================
+
+class SavingsGoalViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar metas de ahorro inteligentes.
+    """
+    serializer_class = SavingsGoalSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return self.request.user.savings_goals.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    @extend_schema(
+        summary="Dashboard de ahorro",
+        description="Obtiene un dashboard completo con todas las metas y estadísticas de ahorro",
+        tags=['savings']
+    )
+    @action(detail=False, methods=['get'])
+    def dashboard(self, request):
+        """Obtiene el dashboard de ahorro del usuario"""
+        user = request.user
+        
+        goals = self.get_queryset()
+        
+        total_savings = goals.aggregate(total=Sum('current_amount'))['total'] or 0
+        total_goals = goals.count()
+        active_goals = goals.filter(status='active').count()
+        completed_goals = goals.filter(status='completed').count()
+        
+        current_month_start = timezone.now().date().replace(day=1)
+        current_month_income = Transaction.objects.filter(
+            user=user,
+            transaction_type='income',
+            date__gte=current_month_start
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        current_month_savings = SavingsTransaction.objects.filter(
+            savings_goal__user=user,
+            transaction_type='deposit',
+            date__gte=current_month_start
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        monthly_savings_rate = (current_month_savings / current_month_income * 100) if current_month_income > 0 else 0
+        
+        recent_recommendations = SavingsRecommendation.objects.filter(
+            user=user,
+            is_read=False
+        ).order_by('-priority', '-created_at')[:5]
+        
+        insights = SavingsInsight.objects.filter(
+            user=user,
+            is_archived=False
+        ).order_by('-created_at')[:3]
+        
+        dashboard_data = {
+            'total_savings': total_savings,
+            'total_goals': total_goals,
+            'active_goals': active_goals,
+            'completed_goals': completed_goals,
+            'monthly_savings_rate': round(monthly_savings_rate, 2),
+            'goals_progress': SavingsGoalSerializer(goals, many=True).data,
+            'recent_recommendations': SavingsRecommendationSerializer(recent_recommendations, many=True).data,
+            'insights': SavingsInsightSerializer(insights, many=True).data
+        }
+        
+        return Response(dashboard_data)
+
+
+class SavingsTransactionViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar transacciones de ahorro.
+    """
+    serializer_class = SavingsTransactionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return SavingsTransaction.objects.filter(savings_goal__user=self.request.user)
+
+
+class AutoSaveRuleViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar reglas de ahorro automático.
+    """
+    serializer_class = AutoSaveRuleSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return self.request.user.auto_save_rules.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class SavingsRecommendationViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet para gestionar recomendaciones de ahorro.
+    """
+    serializer_class = SavingsRecommendationSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return self.request.user.savings_recommendations.all()
+
+    @extend_schema(
+        summary="Marcar como leída",
+        description="Marca una recomendación como leída",
+        tags=['savings']
+    )
+    @action(detail=True, methods=['post'])
+    def mark_as_read(self, request, pk=None):
+        """Marca una recomendación como leída"""
+        recommendation = self.get_object()
+        recommendation.mark_as_read()
+        return Response({'status': 'success'})
+
+    @extend_schema(
+        summary="Marcar como implementada",
+        description="Marca una recomendación como implementada",
+        tags=['savings']
+    )
+    @action(detail=True, methods=['post'])
+    def mark_as_implemented(self, request, pk=None):
+        """Marca una recomendación como implementada"""
+        recommendation = self.get_object()
+        recommendation.mark_as_implemented()
+        return Response({'status': 'success'})
+
+
+class SavingsInsightViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet para gestionar insights de ahorro.
+    """
+    serializer_class = SavingsInsightSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return self.request.user.savings_insights.all()
+
+
+class SavingsAchievementViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet para gestionar logros de ahorro.
+    """
+    serializer_class = SavingsAchievementSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return self.request.user.savings_achievements.all()
+
+
+class SavingsSimulationViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar simulaciones de ahorro.
+    """
+    serializer_class = SavingsSimulationSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return self.request.user.savings_simulations.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class SavingsReminderViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar recordatorios de ahorro.
+    """
+    serializer_class = SavingsReminderSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return self.request.user.savings_reminders.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    @extend_schema(
+        summary="Enviar recordatorio",
+        description="Marca un recordatorio como enviado",
+        tags=['savings']
+    )
+    @action(detail=True, methods=['post'])
+    def send(self, request, pk=None):
+        """Marca un recordatorio como enviado"""
+        reminder = self.get_object()
+        reminder.send()
+        return Response({'status': 'success'})
+
+    @extend_schema(
+        summary="Descartar recordatorio",
+        description="Marca un recordatorio como descartado",
+        tags=['savings']
+    )
+    @action(detail=True, methods=['post'])
+    def dismiss(self, request, pk=None):
+        """Marca un recordatorio como descartado"""
+        reminder = self.get_object()
+        reminder.dismiss()
+        return Response({'status': 'success'})

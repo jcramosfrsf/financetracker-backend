@@ -1,138 +1,205 @@
-# FinanceTracker - Gestor Financiero Personal
+# Finance Tracker Backend
 
-FinanceTracker es una aplicación backend diseñada para ofrecer una solución completa y personalizable para el seguimiento de finanzas personales. Permite a los usuarios registrar sus ingresos y gastos, crear presupuestos inteligentes, analizar sus patrones de gasto y recibir recomendaciones financieras automatizadas.
+Un sistema completo de gestión financiera personal desarrollado con Django REST Framework.
 
-## ✨ Features
+## Características Principales
 
-- ✅ **Gestión de Transacciones:** CRUD completo para ingresos y gastos.
-- ✅ **Categorización de Transacciones:** Asigna categorías personalizadas a cada transacción.
-- ✅ **Gestión de Presupuestos:** Crea y gestiona presupuestos mensuales por categoría.
-- ✅ **API RESTful Segura:** Todos los endpoints están protegidos y requieren autenticación por token.
-- ✅ **Permisos por Usuario:** Los usuarios solo pueden acceder y gestionar su propia información.
-- 🚧 **Generación de Reportes:** Modelo listo para generar reportes automáticos (en desarrollo).
-- 🚧 **Alertas de Gasto:** Planificado para futuras versiones.
-- 🚧 **Importación de Datos Bancarios:** Planificado para futuras versiones.
+### Funcionalidades Básicas
+- **Gestión de Transacciones**: Registro de ingresos y gastos con categorización
+- **Categorías Personalizadas**: Creación y gestión de categorías con colores e iconos
+- **Presupuestos**: Configuración y seguimiento de presupuestos por categoría
+- **Reportes**: Generación de reportes financieros personalizados
+- **Usuarios**: Sistema de autenticación y gestión de usuarios
 
-## 🛠️ Tecnologías Utilizadas
+### Análisis de Transacciones por Categorías
+- **Análisis Detallado**: Métricas completas por categoría y período
+- **Tendencias**: Análisis de tendencias y comparaciones temporales
+- **Resúmenes**: Vistas resumidas de todas las categorías
+- **Estadísticas**: Estadísticas generales de transacciones
 
-- **Backend:** Python, Django
-- **API:** Django REST Framework
-- **Base de Datos:** SQLite (por defecto)
-- **Autenticación:** Autenticación por Token (Django REST Framework)
+### Sistema de Ahorro Inteligente 🆕
+- **Metas de Ahorro**: Definición de objetivos con montos y fechas límite
+- **Sugerencias Automáticas**: Recomendaciones basadas en patrones de gasto
+- **Transferencias Automáticas**: Reglas para ahorro automático
+- **Seguimiento de Progreso**: Monitoreo de avance hacia metas
+- **Recordatorios Inteligentes**: Alertas y motivaciones personalizadas
+- **Simulaciones**: Análisis de escenarios de ahorro
+- **Gamificación**: Sistema de logros y recompensas
+- **Insights**: Evaluación de hábitos financieros
 
-## 🚀 Puesta en Marcha
+## Tecnologías Utilizadas
 
-Sigue estos pasos para configurar y ejecutar el proyecto en tu entorno local.
+- **Django 4.2+**: Framework web principal
+- **Django REST Framework**: API REST
+- **drf-spectacular**: Documentación automática de APIs (Swagger/OpenAPI)
+- **SQLite**: Base de datos (configurable para producción)
+- **Python 3.8+**: Lenguaje de programación
+
+## Instalación
 
 ### Prerrequisitos
+- Python 3.8 o superior
+- pip (gestor de paquetes de Python)
 
-- Python 3.8+
-- `pip` (gestor de paquetes de Python)
+### Pasos de Instalación
 
-### Instalación
+1. **Clonar el repositorio**
+   ```bash
+   git clone <url-del-repositorio>
+   cd financetracker-backend
+   ```
 
-1.  **Clona el repositorio:**
+2. **Crear entorno virtual**
+   ```bash
+   python3 -m venv env
+   source env/bin/activate  # En Windows: env\Scripts\activate
+   ```
 
-    ```bash
-    git clone <URL_DEL_REPOSITORIO>
-    cd financetracker-backend
-    ```
+3. **Instalar dependencias**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-2.  **Crea y activa un entorno virtual:**
+4. **Configurar base de datos**
+   ```bash
+   python3 manage.py makemigrations
+   python3 manage.py migrate
+   ```
 
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+5. **Crear superusuario (opcional)**
+   ```bash
+   python3 manage.py createsuperuser
+   ```
 
-    _En Windows, usa `venv\Scripts\activate`_
+6. **Ejecutar el servidor**
+   ```bash
+   python3 manage.py runserver
+   ```
 
-3.  **Instala las dependencias:**
+## Documentación de APIs
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+### Swagger UI
+Accede a la documentación interactiva de las APIs en:
+- **Swagger UI**: http://localhost:8000/api/docs/
+- **ReDoc**: http://localhost:8000/api/redoc/
+- **Schema OpenAPI**: http://localhost:8000/api/schema/
 
-4.  **Aplica las migraciones de la base de datos:**
+### Documentación Detallada
+- **Análisis de Transacciones**: [API_ANALYSIS_ENDPOINTS.md](API_ANALYSIS_ENDPOINTS.md)
+- **Sistema de Ahorro Inteligente**: [SAVINGS_SYSTEM_ENDPOINTS.md](SAVINGS_SYSTEM_ENDPOINTS.md)
 
-    ```bash
-    python manage.py migrate
-    ```
+## Estructura del Proyecto
 
-5.  **Crea un superusuario para acceder al panel de administración:**
+```
+financetracker-backend/
+├── financetracker/          # Configuración principal de Django
+├── transactions/            # Gestión de transacciones y categorías
+├── budgets/                 # Gestión de presupuestos
+├── reports/                 # Generación de reportes
+├── users/                   # Gestión de usuarios
+├── requirements.txt         # Dependencias del proyecto
+├── manage.py               # Script de gestión de Django
+├── README.md               # Este archivo
+├── API_ANALYSIS_ENDPOINTS.md    # Documentación de análisis
+└── SAVINGS_SYSTEM_ENDPOINTS.md  # Documentación del sistema de ahorro
+```
 
-    ```bash
-    python manage.py createsuperuser
-    ```
-
-    Sigue las instrucciones en la terminal para crear tu usuario.
-
-6.  **Inicia el servidor de desarrollo:**
-    ```bash
-    python manage.py runserver
-    ```
-    La aplicación estará disponible en `http://127.0.0.1:8000/`.
-
-## API Endpoints
-
-La API está construida siguiendo los principios REST. Todos los endpoints (excepto el de autenticación) requieren un token para ser accedidos.
-
-### Documentación Swagger
-
-La documentación completa de la API está disponible en:
-- **Swagger UI**: `http://localhost:8000/api/schema/swagger-ui/`
-- **ReDoc**: `http://localhost:8000/api/schema/redoc/`
-- **Schema JSON**: `http://localhost:8000/api/schema/`
+## Endpoints Principales
 
 ### Autenticación
+- `POST /api/register/` - Registro de usuarios
+- `POST /api-token-auth/` - Obtención de token de autenticación
 
-1.  **Obtener Token de Autenticación**
+### Transacciones
+- `GET/POST /api/transactions/` - Listar/crear transacciones
+- `GET /api/transactions/statistics/` - Estadísticas de transacciones
+- `GET/POST /api/categories/` - Listar/crear categorías
+- `GET /api/categories/{id}/analysis/` - Análisis de categoría
+- `GET /api/categories/summary/` - Resumen de todas las categorías
 
-    Para obtener tu token, realiza una petición `POST` a `/api-token-auth/` con tu usuario y contraseña.
+### Presupuestos
+- `GET/POST /api/budgets/` - Listar/crear presupuestos
 
-    - **Endpoint:** `POST /api-token-auth/`
-    - **Body:**
-      ```json
-      {
-        "username": "tu_usuario",
-        "password": "tu_contraseña"
-      }
-      ```
-    - **Respuesta Exitosa (200 OK):**
-      ```json
-      {
-        "token": "tu_token_de_autenticacion"
-      }
-      ```
+### Reportes
+- `GET/POST /api/reports/` - Listar/crear reportes
 
-2.  **Usar el Token**
+### Sistema de Ahorro Inteligente
+- `GET/POST /api/savings/goals/` - Metas de ahorro
+- `GET /api/savings/goals/dashboard/` - Dashboard de ahorro
+- `GET/POST /api/savings/transactions/` - Transacciones de ahorro
+- `GET/POST /api/savings/rules/` - Reglas de ahorro automático
+- `GET /api/savings/recommendations/` - Recomendaciones
+- `GET /api/savings/insights/` - Insights de ahorro
+- `GET /api/savings/achievements/` - Logros
+- `GET/POST /api/savings/simulations/` - Simulaciones
+- `GET/POST /api/savings/reminders/` - Recordatorios
 
-    Para realizar peticiones a los endpoints protegidos, incluye el token en la cabecera `Authorization`.
+## Características del Sistema de Ahorro Inteligente
 
-    - **Header:** `Authorization: Token tu_token_de_autenticacion`
+### Metas de Ahorro
+- **Tipos de Meta**: Fondo de emergencia, vacaciones, casa, auto, educación, jubilación, boda, negocio, personalizado
+- **Configuración Automática**: Porcentaje de ingresos o cantidad fija
+- **Seguimiento de Progreso**: Porcentaje completado, días restantes, riesgo
+- **Estados**: Activa, pausada, completada, cancelada
 
-### Recursos de la API
+### Ahorro Automático
+- **Reglas Inteligentes**: Porcentaje de ingresos, cantidad fija, excedentes de presupuesto
+- **Frecuencias**: Diario, semanal, quincenal, mensual
+- **Límites**: Montos máximos configurables
+- **Ejecución Automática**: Basada en transacciones de ingresos
 
-| Recurso           | Endpoint                  | Métodos HTTP                    | Descripción                                    |
-| ----------------- | ------------------------- | ------------------------------- | ---------------------------------------------- |
-| **Categorías**    | `/api/categories/`        | `GET`, `POST`                   | Listar todas tus categorías o crear una nueva. |
-|                   | `/api/categories/<id>/`   | `GET`, `PUT`, `PATCH`, `DELETE` | Ver, actualizar o eliminar una categoría.      |
-| **Transacciones** | `/api/transactions/`      | `GET`, `POST`                   | Listar todas tus transacciones o crear una.    |
-|                   | `/api/transactions/<id>/` | `GET`, `PUT`, `PATCH`, `DELETE` | Ver, actualizar o eliminar una transacción.    |
-| **Presupuestos**  | `/api/budgets/`           | `GET`, `POST`                   | Listar todos tus presupuestos o crear uno.     |
-|                   | `/api/budgets/<id>/`      | `GET`, `PUT`, `PATCH`, `DELETE` | Ver, actualizar o eliminar un presupuesto.     |
-| **Reportes**      | `/api/reports/`           | `GET`, `POST`                   | Listar todos tus reportes o crear uno.         |
-|                   | `/api/reports/<id>/`      | `GET`, `PUT`, `PATCH`, `DELETE` | Ver, actualizar o eliminar un reporte.         |
-| **Análisis**      | `/api/categories/{id}/analysis/` | `GET`                    | Análisis detallado de una categoría específica. |
-|                   | `/api/categories/summary/` | `GET`                    | Resumen de todas las categorías con métricas.   |
-|                   | `/api/transactions/statistics/` | `GET`                | Estadísticas generales de transacciones.        |
+### Recomendaciones e Insights
+- **Análisis de Patrones**: Detección de gastos excesivos
+- **Sugerencias Personalizadas**: Basadas en comportamiento financiero
+- **Optimización**: Recomendaciones para alcanzar metas más rápido
+- **Insights Automáticos**: Análisis de tendencias y oportunidades
 
-## 🔮 Próximos Pasos
+### Gamificación
+- **Logros**: Metas completadas, rachas de ahorro, hitos alcanzados
+- **Puntos**: Sistema de puntuación por logros
+- **Badges**: Reconocimientos por hábitos financieros
+- **Motivación**: Recordatorios y celebraciones de logros
 
-- ✅ **Análisis de Transacciones por Categorías**: Implementado con endpoints detallados y métricas avanzadas.
-- Implementar la lógica de negocio para la generación automática de reportes.
-- Desarrollar un frontend (por ejemplo, con React) para consumir la API.
-- Crear un sistema de alertas por correo o notificaciones push.
-- Integrar un sistema para la importación de extractos bancarios (CSV, etc.).
-- Implementar análisis de tendencias más sofisticado.
-- Crear endpoints para exportación de datos a CSV/Excel.
+### Simulaciones
+- **Escenarios**: Reducción de gastos, aumento de ingresos
+- **Predicciones**: Impacto en metas de ahorro
+- **Comparaciones**: Diferentes estrategias de ahorro
+- **Planificación**: Herramientas para tomar decisiones informadas
+
+## Desarrollo
+
+### Ejecutar Tests
+```bash
+python3 manage.py test
+```
+
+### Crear Migraciones
+```bash
+python3 manage.py makemigrations
+```
+
+### Aplicar Migraciones
+```bash
+python3 manage.py migrate
+```
+
+### Shell de Django
+```bash
+python3 manage.py shell
+```
+
+## Contribución
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## Contacto
+
+Para preguntas o soporte, por favor contacta al equipo de desarrollo.
